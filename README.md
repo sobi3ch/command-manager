@@ -31,7 +31,7 @@ Nothing special. With simple bash alias I can do it as well, and also we could c
 
 What's next.. let's create project relatead variable `BASE_PATH`
 ```
-$ am add var BASE_PATH=/var/www/vhosts/alpha.areo
+$ am add-var BASE_PATH=/var/www/vhosts/alpha.areo
 Alias project variable created: 
 ```
 This variable will be remember for whole project and we can use it whenever and wherever we want.
@@ -86,6 +86,7 @@ am list <project_name> # List all project aliases and variables
 am list <project_name> alias # List all project aliases ONLY
 am list <project_name> vars # List all project variables ONLY
 am add <alias_name> # Add local alias
+am rename <alias_name> # Rename existing alias
 am remove <alias_name> # Remove alias from current project  (ask [y/n])
 am add-remote <alias_name> # Add alias on your remote machine
 am remove-remote <alias_name> # Remove alias on your remote machine  (ask [y/n])
