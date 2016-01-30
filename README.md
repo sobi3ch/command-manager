@@ -15,14 +15,14 @@ You can simply set following aliases on your host and remote machine (`am` is *a
 > We assuming `alpha` is your project name, of course it can be entyhitng else like single `a`, it's up to you how you name it.
 
 First we want initialized project
-```bash
+```
 $ am init alpha
 Alias managment for project *alpha* initialized.
 Project *alpha* set.
 ```
 
 Then we'll create first simple alias..
-```bash
+```
 $ am add ssh='ssh john@123.234.1.2 -p 50683'
 Alias created: alpha.ssh
 ```
@@ -30,20 +30,20 @@ Nothing special. With simple bash alias I can do it as well, and also we could c
 
 
 What's next.. let's create project relatead variable `BASE_PATH`
-```bash
+```
 $ am add var BASE_PATH=/var/www/vhosts/alpha.areo
 Alias project variable created: 
 ```
 This variable will be remember for whole project and we can use it whenever and wherever we want.
 
 So let do it in next alias `alpha.public`. This will create this alias for you on remote `alpha` host with some description.
-```bash
+```
 $ am add-remote public='cd $BASE_PATH/public_html/' --desc='CD to main publich_html/'
 alpha: Remote alias created: CD to main publich_html/
 ```
 
 Add remote `alpha.files` alias
-```bash
+```
 $ am add-remote files='cd $BASE_PATH/public_html/sites/default/files'
 Remote alias created
 alpha.files='cd $BASE_PATH/public_html/sites/default/files'
@@ -51,7 +51,7 @@ alpha.files='cd $BASE_PATH/public_html/sites/default/files'
 
 
 Now list all `alpha` aliases
-```bash
+```
 $ am list alpha
 Aliases for *alpha* project
  alpha.ssh='ssh alpha'
@@ -63,7 +63,7 @@ Aliases variables
 ```
 
 When you try do entything with project that doesn't exist then error will occure..
-```bash
+```
 $ am list beta
 Project *beta* doesn't exist: Error
 ```
