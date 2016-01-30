@@ -97,9 +97,10 @@ $ <project_name>.[2xTAB]
 ```
 
 If you have some other stuff to do on another box with the same project you can set something like this
-```bash
-john@box $ am add --remote:alpha-box2 alpha.stuff='cd /path/to/somewere && git branch'
 ```
+$ am add-remote --box=alpha-box2 dostuff='cd /path/to/somewere && git branch'
+```
+.. where `alpha-box2` needs to be define in you `~/.ssh/config` file.
 
 Now for `delta` project you can do similar things..
 ```bash
