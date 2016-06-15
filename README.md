@@ -8,6 +8,9 @@ Imagine you have 2 web projects `foo` and `bar`. For each one you have common ta
 
 > There will be more information how to work with more then one server in future..
 
+
+### Usage
+
 OK so how *alias-manager* can help me?
 
 You can simply set following aliases on your host and remote machine (`am` is *alias-manager* command):
