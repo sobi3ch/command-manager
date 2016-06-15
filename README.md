@@ -4,7 +4,7 @@
 
 Manage your projects using aliases
 
-Imagine you have 2 web projects `foo` and `bar`. For each one you have common task to do but in different way. Like each of this projects lives in different server. You obiously set ssh keys with agent and `~/.ssh/config` so you can quckly ssh to them with `ssh foo` and `ssh bar`. Both projects lives in different directories, `foo` in `/var/www/vhosts/foo.areo/publich_html/` and `bar` in `/var/www/bar/app/`. Addicinally `bar` contain `files` directory inside project path under `sites/default/files/` and `foo` doesn't, but have special `cofnig` file you editing very often.
+Imagine you have 2 web projects `foo` and `bar`. For each one you have common task to do but in different way. Like each of this projects lives in different server. You obiously set ssh keys with agent and `~/.ssh/config` so you can quckly ssh to them with `ssh foo` and `ssh bar`. Both projects lives in different directories, `foo` in `/var/www/vhosts/foo.areo/publich_html/` and `bar` in `/var/www/bar/app/`. Additionally `bar` contain `files` directory inside project path under `sites/default/files/` and `foo` doesn't, but have special `cofnig` file you editing very often.
 
 > There will be more information how to work with more then one server in future..
 
