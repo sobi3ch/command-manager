@@ -1,6 +1,6 @@
 # alias-manager
 
-> ####This is just initial notes for future development!
+> ####This is just initial notes for further development!
 
 Manage your projects using aliases
 
