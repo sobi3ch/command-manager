@@ -2,13 +2,23 @@
 _PROJECT=$(cat ${HOME}/.pm/_CURRENT_PROJECT)
 
 
+# Load all projects
+echo -n '' > /tmp/.pm-source-file
+for PRO in $(find $HOME/.pm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev)
+do
+  cat ~/.pm/$PRO/aliases | sed "s#^#alias ${PRO}.#g" >> /tmp/.pm-source-file
+done
+source /tmp/.pm-source-file
+
+
+# Main function
 _pm() {
   if [ "$#" -eq 0 ]; then
     _pm_help
   else
     case $1 in
       help)        _pm_help;;
-      version)     echo '0.1.0';;
+      version)     echo '{{VERSION}}';;
       init)        _pm_init "$@";;
       set|current) _pm_set "$@";;
       add)         _pm_add "$@";;
@@ -24,8 +34,8 @@ _pm() {
 
 alias pm='_pm 2>&1'
 
+# Load all project sub-commands
 _pm_load() {
-  # Load all project sub-commands
   cat ${HOME}/.pm/${_PROJECT}/aliases | sed "s#^#alias ${_PROJECT}.#g"
 }
 
@@ -62,7 +72,7 @@ Report bugs to: https://github.com/sobi3ch/project-manager/issues
 EOF
 }
 
-_pm_nit() {
+_pm_init() {
   local PROJECT=$2
   if [ ! -d "${HOME}/.pm/${PROJECT}" ]; then
     mkdir -p ${HOME}/.pm/${PROJECT}
@@ -98,9 +108,9 @@ _pm_set() {
 _pm_add() {
   echo "Type your alias like: ll='ls -la'"
   read -p '> ' ALIAS
-  NAME=$(echo "${ALIAS}" | cut -d'=' -f1)
+  local NAME=$(echo "${ALIAS}" | cut -d'=' -f1)
   cat ~/.pm/${_PROJECT}/aliases | grep ^${NAME}= > /dev/null
-  EXIT=$?
+  local EXIT=$?
   if [ $EXIT -ne 0 ]; then
     echo "${ALIAS}" >> ${HOME}/.pm/${_PROJECT}/aliases && \
     echo "Alias created: ${_PROJECT}.${NAME}"
@@ -118,11 +128,13 @@ _pm_list() {
 }
 
 _pm_projects() {
-  CURRENT_PROJECT=$(cat $HOME/.pm/_CURRENT_PROJECT)
+  local CURRENT_PROJECT=$(cat $HOME/.pm/_CURRENT_PROJECT)
   find $HOME/.pm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev | sed "s#$CURRENT_PROJECT#$CURRENT_PROJECT*#"
 }
 
 # Edit with default editor aliases file
 _pm_edit() {
   "${EDITOR:-vi}" ${HOME}/.pm/${_PROJECT}/aliases
+  cat ${HOME}/.pm/${_PROJECT}/aliases | sed "s#^#alias ${_PROJECT}.#g" > /tmp/.pm-source-file
+  source /tmp/.pm-source-file
 }
