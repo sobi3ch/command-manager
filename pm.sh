@@ -20,6 +20,7 @@ _pm() {
       help)        _pm_help;;
       version)     echo '{{VERSION}}';;
       init)        _pm_init "$@";;
+      rm-project)  _pm_rm-project "$@";;
       set|current) _pm_set "$@";;
       add)         _pm_add "$@";;
       remove)      _pm_remove;;
@@ -84,9 +85,36 @@ _pm_init() {
   fi
 }
 
+_pm_rm-project() {
+  local CURRENT_PROJECT=$(cat $HOME/.pm/_CURRENT_PROJECT)
+  if [[ $# -gt 1 ]]
+  then
+    local PROJECT=$2
+    if [ "$PROJECT" == "$CURRENT_PROJECT" ]
+    then
+      echo "error: Cannot delete the project '$PROJECT' which you are currently on."
+    else
+      _pm_projects | grep $PROJECT > /dev/null
+      if [[ $? -gt 0 ]]
+      then
+        echo "error: There is no project '$PROJECT'."
+      else
+        read -p "Are you sure you want to permanently delete project '$PROJECT'? [y/N]: " opt
+        if [ "$opt" == "y" ]
+        then
+          rm -rf ${HOME}/.pm/${PROJECT} && \
+          echo "'$PROJECT' deleted."
+        fi
+      fi
+    fi
+  else
+    echo 'To few parameters'
+  fi
+}
+
 ## Set the current project
 _pm_set() {
-  CURRENT_PROJECT=$(cat $HOME/.pm/_CURRENT_PROJECT)
+  local CURRENT_PROJECT=$(cat $HOME/.pm/_CURRENT_PROJECT)
 
   if [[ $# -eq 1 ]]
   then
