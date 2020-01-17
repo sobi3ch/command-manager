@@ -4,6 +4,8 @@ PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
 ## If temp file project holder file does not exist then do not do anything
 if test -f "$PROJECT_FILE"; then
     _PROJECT=$(cat $PROJECT_FILE)
+else
+  touch $PROJECT_FILE
 fi
 
 ## If command-manager main directory doesn't exist create new empty one
@@ -85,6 +87,12 @@ EOF
 }
 
 _cm_init() {
+  if [ -z "$2" ]
+  then
+    echo "Project name is missing"
+    echo "usage: cm init <project-name>"
+    return
+  fi
   local PROJECT=$2
   if [ ! -d "${HOME}/.cm/${PROJECT}" ]; then
     mkdir -p ${HOME}/.cm/${PROJECT}
@@ -167,8 +175,13 @@ _cm_list() {
 }
 
 _cm_projects() {
+  LIST=$(for P in $(find $HOME/.cm/ -maxdepth 1 -type d -print | tail  -n+2); do
+    basename $P
+  done)
+
+  # TODO check if not empty
   local CURRENT_PROJECT=$(cat $HOME/.cm/_CURRENT_PROJECT)
-  find $HOME/.cm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev | sed "s#$CURRENT_PROJECT#$CURRENT_PROJECT*#"
+  echo "$LIST" | sed "s#$CURRENT_PROJECT#$CURRENT_PROJECT*#"
 }
 
 # Edit with default editor aliases file
