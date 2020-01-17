@@ -1,7 +1,7 @@
 # Initialization
 PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
 
-## If temp file project holder file does not exist then do not do anything
+## Set current project name
 if test -f "$PROJECT_FILE"; then
     _PROJECT=$(cat $PROJECT_FILE)
 else
@@ -14,7 +14,7 @@ if [ ! -d "${HOME}/.cm" ]; then
   echo "command-manager initialized"
 fi
 
-# Load all projects
+# Load all commands from all projects
 echo -n '' > /tmp/.cm-source-file
 for PRO in $(find $HOME/.cm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev)
 do
@@ -160,10 +160,18 @@ _cm_add() {
   local EXIT=$?
   if [ $EXIT -ne 0 ]; then
     echo "${ALIAS}" >> ${HOME}/.cm/${_PROJECT}/aliases && \
+    _cm_reload_project_commands $_PROJECT.$NAME && \
     echo "Alias created: ${_PROJECT}.${NAME}"
   else
     echo "This sub-command already exist"
   fi
+}
+
+_cm_reload_project_commands()  {
+  echo "Setting out: $1"
+  cat ${HOME}/.cm/${_PROJECT}/aliases | sed "s#^#alias $_PROJECT.#g" >> /tmp/.cm-source-file
+  source /tmp/.cm-source-file
+  rm /tmp/.cm-source-file
 }
 
 _cm_remove() {
