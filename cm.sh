@@ -3,7 +3,7 @@ PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
 
 ## Set current project name
 if test -f "$PROJECT_FILE"; then
-    _PROJECT=$(cat $PROJECT_FILE)
+  _PROJECT=$(cat $PROJECT_FILE)
 else
   touch $PROJECT_FILE
 fi
@@ -25,7 +25,7 @@ rm /tmp/.cm-source-file
 
 
 # Main function
-_cm() {
+function _cm() {
   if [ "$#" -eq 0 ]; then
     _cm_help
   else
@@ -48,14 +48,20 @@ _cm() {
 
 alias cm='_cm 2>&1'
 
+# Autocomplete
+function _cm__autocomplete() {
+  COMMANDS=$(grep --color=never -E "^[[:space:]]+[[:alpha:]|-]+).+;;" cm.sh | cut -d')' -f1 | awk '{$1=$1};1' | sed 's/|/\n/g' | tr '\r\n' ' ')
+  complete -W "$COMMANDS" cm
+}
+
 # Load all project sub-commands
-_cm_load() {
+function _cm_load() {
   cat ${HOME}/.cm/${_PROJECT}/aliases | sed "s#^#alias ${_PROJECT}.#g"
 }
 
-_cm_help() {
+function _cm_help() {
   cat <<EOF
-usage: pm [command]
+usage: cm [command]
   help
     Prints this help page
   version
@@ -86,7 +92,7 @@ Report bugs to: https://github.com/sobi3ch/project-manager/issues
 EOF
 }
 
-_cm_init() {
+function _cm_init() {
   if [ -z "$2" ]
   then
     echo "Project name is missing"
@@ -104,7 +110,7 @@ _cm_init() {
   fi
 }
 
-_cm_rm-project() {
+function _cm_rm-project() {
   local CURRENT_PROJECT=$(cat $HOME/.cm/_CURRENT_PROJECT)
   if [[ $# -gt 1 ]]
   then
@@ -132,7 +138,7 @@ _cm_rm-project() {
 }
 
 ## Set the current project
-_cm_set() {
+function _cm_set() {
   local CURRENT_PROJECT=$(cat $HOME/.cm/_CURRENT_PROJECT)
 
   if [[ $# -eq 1 ]]
@@ -152,7 +158,7 @@ _cm_set() {
   fi
 }
 
-_cm_add() {
+function _cm_add() {
   echo "Type your alias like: ll='ls -la'"
   read -p '> ' ALIAS
   local NAME=$(echo "${ALIAS}" | cut -d'=' -f1)
@@ -167,22 +173,22 @@ _cm_add() {
   fi
 }
 
-_cm_reload_project_commands()  {
+function _cm_reload_project_commands()  {
   echo "Setting out: $1"
   cat ${HOME}/.cm/${_PROJECT}/aliases | sed "s#^#alias $_PROJECT.#g" >> /tmp/.cm-source-file
   source /tmp/.cm-source-file
   rm /tmp/.cm-source-file
 }
 
-_cm_remove() {
+function _cm_remove() {
   echo 'Removing existing command'
 }
 
-_cm_list() {
+function _cm_list() {
   grep -Eo "^[a-zA-Z0-9]+=" ${HOME}/.cm/${_PROJECT}/aliases | sed 's#=$##' | sed "s#^#${_PROJECT}.#"
 }
 
-_cm_projects() {
+function _cm_projects() {
   LIST=$(for P in $(find $HOME/.cm/ -maxdepth 1 -type d -print | tail  -n+2); do
     basename $P
   done)
@@ -193,8 +199,10 @@ _cm_projects() {
 }
 
 # Edit with default editor aliases file
-_cm_edit() {
+function _cm_edit() {
   "${EDITOR:-vi}" ${HOME}/.cm/${_PROJECT}/aliases
   cat ${HOME}/.cm/${_PROJECT}/aliases | sed "s#^#alias ${_PROJECT}.#g" > /tmp/.cm-source-file
   source /tmp/.cm-source-file
 }
+
+_cm__autocomplete
