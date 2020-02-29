@@ -1,5 +1,12 @@
 # Initialization
 PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
+_PROJECT=''
+
+## If command-manager main directory doesn't exist create new empty one
+if [ ! -d "${HOME}/.cm" ]; then
+  mkdir -p ${HOME}/.cm
+  echo "command-manager: folder initialized"
+fi
 
 ## Set current project name
 if test -f "$PROJECT_FILE"; then
@@ -8,17 +15,11 @@ else
   touch $PROJECT_FILE
 fi
 
-## If command-manager main directory doesn't exist create new empty one
-if [ ! -d "${HOME}/.cm" ]; then
-  mkdir -p ${HOME}/.cm
-  echo "command-manager initialized"
-fi
-
 # Load all commands from all projects
 echo -n '' > /tmp/.cm-source-file
-for PRO in $(find $HOME/.cm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev)
+for PROJECT in $(find $HOME/.cm/ -maxdepth 1 -type d -print | tail -n +2 | rev | cut -d'/' -f1 | rev)
 do
-  cat ~/.cm/$PRO/aliases | sed "s#^#alias ${PRO}.#g" >> /tmp/.cm-source-file
+  cat ~/.cm/$PROJECT/aliases | sed "s#^#alias ${PROJECT}.#g" >> /tmp/.cm-source-file
 done
 source /tmp/.cm-source-file
 rm /tmp/.cm-source-file
@@ -52,6 +53,11 @@ alias cm='_cm 2>&1'
 function _cm__autocomplete() {
   COMMANDS=$(grep --color=never -E "^[[:space:]]+[[:alpha:]|-]+).+;;" cm.sh | cut -d')' -f1 | awk '{$1=$1};1' | sed 's/|/\n/g' | tr '\r\n' ' ')
   complete -W "$COMMANDS" cm
+}
+
+# Print command-manager information
+function _cm__info() {
+  echo "cm: $@"
 }
 
 # Load all project sub-commands
@@ -95,8 +101,8 @@ EOF
 function _cm_init() {
   if [ -z "$2" ]
   then
-    echo "Project name is missing"
-    echo "usage: cm init <project-name>"
+    _cm__info "Project name is missing"
+    _cm__info "usage: cm init <project-name>"
     return
   fi
   local PROJECT=$2
@@ -104,9 +110,9 @@ function _cm_init() {
     mkdir -p ${HOME}/.cm/${PROJECT}
     touch    ${HOME}/.cm/${PROJECT}/aliases
     _cm_set $PROJECT
-    echo "Project *${PROJECT}* created"
+    _cm__info "Project *${PROJECT}* created"
   else
-    echo "Project *${PROJECT}* already exist"
+    _cm__info "Project *${PROJECT}* already exist"
   fi
 }
 
@@ -141,18 +147,18 @@ function _cm_rm-project() {
 function _cm_set() {
   local CURRENT_PROJECT=$(cat $HOME/.cm/_CURRENT_PROJECT)
 
-  if [[ $# -eq 1 ]]
+  if [[ $# -eq 1 && ! -z "$CURRENT_PROJECT" ]]
   then
-    echo $CURRENT_PROJECT
+    _cm__info $CURRENT_PROJECT
   else
-    PROJECT=$2
+    PROJECT=$1
     if [ ! -d "${HOME}/.cm/${PROJECT}" ]; then
       echo "Missing project: ${PROJECT}"
     elif [ "$PROJECT" == "$CURRENT_PROJECT" ]; then
       echo "Already on '${PROJECT}'"
     else
       echo $PROJECT > $HOME/.cm/_CURRENT_PROJECT
-      echo "Switching to: ${PROJECT}"
+      _cm__info "Project set to: ${PROJECT}"
       _PROJECT=$(cat ${HOME}/.cm/_CURRENT_PROJECT)
     fi
   fi
