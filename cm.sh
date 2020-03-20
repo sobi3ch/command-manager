@@ -1,6 +1,8 @@
 # Initialization
 PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
 _PROJECT=''
+CM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 
 ## If command-manager main directory doesn't exist create new empty one
 if [ ! -d "${HOME}/.cm" ]; then
@@ -51,7 +53,7 @@ alias cm='_cm 2>&1'
 
 # Autocomplete
 function _cm__autocomplete() {
-  COMMANDS=$(grep --color=never -E "^[[:space:]]+[[:alpha:]|-]+).+;;" cm.sh | cut -d')' -f1 | awk '{$1=$1};1' | sed 's/|/\n/g' | tr '\r\n' ' ')
+  COMMANDS=$(grep --color=never -E "^[[:space:]]+[[:alpha:]|-]+).+;;" $CM_DIR/cm.sh | cut -d')' -f1 | awk '{$1=$1};1' | sed 's/|/\n/g' | tr '\r\n' ' ')
   complete -W "$COMMANDS" cm
 }
 
