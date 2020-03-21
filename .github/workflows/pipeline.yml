@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request 
+# Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
@@ -24,4 +24,4 @@ jobs:
 
     # Runs all tests
     - name: Run tests
-      run: ./tests/bash_unit tests/tests.bash_unit
+      run: ./tests/bash_unit tests/*.bash_unit

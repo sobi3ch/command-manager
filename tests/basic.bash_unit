@@ -23,13 +23,6 @@ test_cm_help__output() {
   assert "diff help.txt <(cm help)" "Print help message"
 }
 
-
-# test_output() {
-#   assert_equals `xxx.anime` "manga"
-# }
-#
-# test_add_command() {
-#   ./run-add-test.expect
-#   source cm.sh
-#   assert_equals `xxx.ada` "Computer"
-# }
+test_cm_version__output() {
+  assert 'diff  <(echo "{{VERSION}}" ) <(cm version)' "Print help message"
+}
