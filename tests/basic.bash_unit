@@ -1,10 +1,7 @@
 
-# https://github.com/pgrange/bash_unit
-# run tests with: $ ./bash_unit THIS_FILE
-
 setup() {
   shopt -s expand_aliases
-  source ../cm.sh
+  source ../cm.sh > /dev/null
 }
 
 test_cm() {
@@ -24,5 +21,5 @@ test_cm_help__output() {
 }
 
 test_cm_version__output() {
-  assert 'diff  <(echo "{{VERSION}}" ) <(cm version)' "Print help message"
+  assert 'diff  <(echo "{{VERSION}}" ) <(cm version)' "Print version"
 }

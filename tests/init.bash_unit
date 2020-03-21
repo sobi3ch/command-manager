@@ -1,0 +1,23 @@
+
+setup() {
+  shopt -s expand_aliases
+  source ../cm.sh > /dev/null
+}
+
+# Remove command-manager folder entierly
+teardown() {
+  rm -rf $HOME/.cm
+}
+
+# Init foo project
+test_cm_init() {
+  assert "cm init foo" "'cm init foo' execution"
+}
+
+test_cm_init_output() {
+  OUTPUT=$(cm init foo)
+  assert 'diff  <(echo "$OUTPUT" ) <(echo -e "cm: Project set to: foo\ncm: Project *foo* created")' "'cm init foo' execution"
+}
+
+
+#assert "diff help.txt <(cm)" "Print help message"

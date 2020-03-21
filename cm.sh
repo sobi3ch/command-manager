@@ -3,11 +3,13 @@ PROJECT_FILE=${HOME}/.cm/_CURRENT_PROJECT
 _PROJECT=''
 CM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+_CM_INIT_USAGE="usage: cm init <project-name>"
+
 
 ## If command-manager main directory doesn't exist create new empty one
 if [ ! -d "${HOME}/.cm" ]; then
   mkdir -p ${HOME}/.cm
-  echo "command-manager: folder initialized"
+  echo "command-manager: ${HOME}/.cm created"
 fi
 
 ## Set current project name
@@ -62,6 +64,11 @@ function _cm__info() {
   echo "cm: $@"
 }
 
+# Print command-manager error message to stderr
+function _cm__error() {
+  >&2 echo "error: $@"
+}
+
 # Load all project sub-commands
 function _cm_load() {
   cat ${HOME}/.cm/${_PROJECT}/aliases | sed "s#^#alias ${_PROJECT}.#g"
@@ -103,9 +110,9 @@ EOF
 function _cm_init() {
   if [ -z "$2" ]
   then
-    _cm__info "Project name is missing"
-    _cm__info "usage: cm init <project-name>"
-    return
+    _cm__error "Project name is missing"
+    _cm__info  $_CM_INIT_USAGE
+    return 2
   fi
   local PROJECT=$2
   if [ ! -d "${HOME}/.cm/${PROJECT}" ]; then
@@ -125,12 +132,12 @@ function _cm_rm-project() {
     local PROJECT=$2
     if [ "$PROJECT" == "$CURRENT_PROJECT" ]
     then
-      echo "error: Cannot delete the project '$PROJECT' which you are currently on."
+      _cm__error "Cannot delete the project '$PROJECT' which you are currently on."
     else
       _cm_projects | grep $PROJECT > /dev/null
       if [[ $? -gt 0 ]]
       then
-        echo "error: There is no project '$PROJECT'."
+        _cm__error "There is no project '$PROJECT'."
       else
         read -p "Are you sure you want to permanently delete project '$PROJECT'? [y/N]: " opt
         if [ "$opt" == "y" ]
@@ -147,7 +154,14 @@ function _cm_rm-project() {
 
 ## Set the current project
 function _cm_set() {
-  local CURRENT_PROJECT=$(cat $HOME/.cm/_CURRENT_PROJECT)
+  local FILE=$HOME/.cm/_CURRENT_PROJECT
+  if [ ! -f "$FILE" ]; then
+    _cm__error "It looks like you don't have any project yet"
+    _cm__info  $_CM_INIT_USAGE
+    return 3
+  fi
+
+  local CURRENT_PROJECT=$(cat $FILE)
 
   if [[ $# -eq 1 && ! -z "$CURRENT_PROJECT" ]]
   then

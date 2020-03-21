@@ -1,0 +1,9 @@
+# test_output() {
+#   assert_equals `xxx.anime` "manga"
+# }
+#
+# test_add_command() {
+#   ./run-add-test.expect
+#   source cm.sh
+#   assert_equals `xxx.ada` "Computer"
+# }
