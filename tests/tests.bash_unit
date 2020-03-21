@@ -1,0 +1,35 @@
+
+# https://github.com/pgrange/bash_unit
+# run tests with: $ ./bash_unit THIS_FILE
+
+setup() {
+  shopt -s expand_aliases
+  source ../cm.sh
+}
+
+test_cm() {
+  assert "cm" "`cm` execution"
+}
+
+test_cm_help() {
+  assert "cm help" "`cm help` execution"
+}
+
+test_cm__output() {
+  assert "diff help.txt <(cm)" "Print help message"
+}
+
+test_cm_help__output() {
+  assert "diff help.txt <(cm help)" "Print help message"
+}
+
+
+# test_output() {
+#   assert_equals `xxx.anime` "manga"
+# }
+#
+# test_add_command() {
+#   ./run-add-test.expect
+#   source cm.sh
+#   assert_equals `xxx.ada` "Computer"
+# }
